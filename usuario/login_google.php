@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode([
             "success" => true,
             "message" => "Usuario ya registrado",
-            "usuario" => $usuario
+            "data" => $usuario
         ]);
     } else {
         // Registrar nuevo usuario con datos predeterminados
@@ -41,20 +41,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $telefono = "0000000000";
         $password = "autenticadoGoogle";
         $direccion = "Sin dirección";
-        $type = 2; // Tipo de usuario (2: Usuario)
+        $type = 1; // Tipo de usuario (2: Usuario)
 
         $queryUsuario = "INSERT INTO usuario (nombre, email, telefono, password, direccion, type) 
                          VALUES ('$nombre', '$email', '$telefono', '$password', '$direccion', $type)";
         if ($conn->query($queryUsuario)) {
-            // Obtener el ID del usuario recién creado
-            $idUsuario = $conn->insert_id;
 
-            echo json_encode([
-                "success" => true,
-                "message" => "Usuario registrado con éxito",
-                "idUsuario" => $idUsuario,
-                "email" => $email
-            ]);
+            $sql = "SELECT * FROM usuario WHERE email = '$email'";
+            if ($result->num_rows > 0) {
+                // Usuario existente
+                $usuario = $result->fetch_assoc();
+                echo json_encode([
+                    "success" => true,
+                    "message" => "Usuario ya registrado",
+                    "data" => $usuario
+                ]);
+            }
         } else {
             echo json_encode(["error" => "Error al registrar el usuario: " . $conn->error]);
         }

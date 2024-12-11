@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre_mascota = $_POST['nombre_mascota'];
     $raza_mascota = $_POST['raza_mascota'];
     $edad_mascota = $_POST['edad_mascota'];
-    $type = 0;
+    $type = 1;
 
     // Insertar el usuario
     $queryUsuario = "INSERT INTO usuario (nombre, email, telefono, password, direccion, type) 
