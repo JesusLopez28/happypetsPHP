@@ -14,18 +14,21 @@ if ($conn->connect_error) {
 }
 
 // Verificar el método de la solicitud
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $sql = "SELECT * FROM usuario WHERE type = 1";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id = $_POST['id'] ?? null;
+
+    if (!$id) {
+        echo json_encode(["error" => "ID no proporcionado"]);
+        exit;
+    }
+
+    $sql = "DELETE FROM producto WHERE id = $id";
     $result = $conn->query($sql);
 
-    if ($result->num_rows > 0) {
-        $usuarios = [];
-        while ($row = $result->fetch_assoc()) {
-            $usuarios[] = $row;
-        }
-        echo json_encode(["success" => true, "data" => $usuarios]);
+    if ($conn->affected_rows > 0) {
+        echo json_encode(["success" => true, "message" => "Producto eliminado"]);
     } else {
-        echo json_encode(["error" => "No hay usuarios registrados"]);
+        echo json_encode(["error" => "Producto no encontrado"]);
     }
 } else {
     echo json_encode(["error" => "Método no permitido"]);

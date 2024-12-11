@@ -15,17 +15,17 @@ if ($conn->connect_error) {
 
 // Verificar el método de la solicitud
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $sql = "SELECT * FROM usuario WHERE type = 1";
+    $sql = "SELECT * FROM producto";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
-        $usuarios = [];
+        $productos = [];
         while ($row = $result->fetch_assoc()) {
-            $usuarios[] = $row;
+            $productos[] = $row;
         }
-        echo json_encode(["success" => true, "data" => $usuarios]);
+        echo json_encode(["success" => true, "data" => $productos]);
     } else {
-        echo json_encode(["error" => "No hay usuarios registrados"]);
+        echo json_encode(["error" => "No hay productos registrados"]);
     }
 } else {
     echo json_encode(["error" => "Método no permitido"]);
