@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         // Registrar nuevo usuario con datos predeterminados
         $nombre = $_POST['nombre'] ?? "Usuario Google";
-        $telefono = $_POST['telefono'] ?? "0000000000";
+        $telefono = "0000000000";
         $password = "autenticadoGoogle";
         $direccion = "Sin dirección";
         $type = 1; // Tipo de usuario (2: Usuario)
