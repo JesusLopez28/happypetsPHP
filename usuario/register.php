@@ -16,15 +16,14 @@ if ($conn->connect_error) {
 // Verificar el método de la solicitud
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Obtener datos desde POST
-    $nombre = $_POST['nombre'] ?? 'Prueba';
-    $email = $_POST['email'] ?? 'prueba@gmail.com';
-    $telefono = $_POST['telefono'] ?? '1234567899';
-    $password = $_POST['password'] ?? 'password';
-    $direccion = $_POST['direccion'] ?? 'Calle 123, Ciudad, País';
-    // mascotas es un JSON con un array de puros id's de mascotas
-    $nombre_mascota = $_POST['nombre_mascota'] ?? 'Firulais';
-    $raza_mascota = $_POST['raza_mascota'] ?? 'Pastor Alemán';
-    $edad_mascota = $_POST['edad_mascota'] ?? 5;
+    $nombre = $_POST['nombre'];
+    $email = $_POST['email'];
+    $telefono = $_POST['telefono'];
+    $password = $_POST['password'];
+    $direccion = $_POST['direccion'];
+    $nombre_mascota = $_POST['nombre_mascota'];
+    $raza_mascota = $_POST['raza_mascota'];
+    $edad_mascota = $_POST['edad_mascota'];
     $type = 0;
 
     // Insertar el usuario
