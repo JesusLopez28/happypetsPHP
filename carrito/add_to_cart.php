@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cantidad = 1;
 
     // Verificar si el usuario ya tiene un carrito
-    $sql = "SELECT * FROM carrito WHERE usuario = '$email'";
+    $sql = "SELECT * FROM carrito WHERE usuario = (SELECT id FROM usuario WHERE email = '$email')";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -33,14 +33,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $status = $carrito['status'];
 
         // Verificar si el producto ya está en el carrito
-        if (array_key_exists($id_producto, $productos)) {
-            $productos[$id_producto] += $cantidad;
-        } else {
-            $productos[$id_producto] = $cantidad;
+        if (!in_array($id_producto, $productos)) {
+            $productos[] = $id_producto; // Agregar solo el ID del producto
         }
 
         // Actualizar el carrito
-        $subTotal += $productos[$id_producto]['precio'] * $cantidad;
+        $subTotal = 0;
+        foreach ($productos as $id_prod) {
+            $sql = "SELECT precio FROM producto WHERE id = $id_prod";
+            $result = $conn->query($sql);
+            if ($result->num_rows > 0) {
+                $producto = $result->fetch_assoc();
+                $subTotal += $producto['precio'];
+            }
+        }
         $iva = $subTotal * 0.16;
         $total = $subTotal + $iva;
 
@@ -63,8 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $producto = $result->fetch_assoc();
-        $productos = [$id_producto => $cantidad];
-        $subTotal = $producto['precio'] * $cantidad;
+        $productos = [$id_producto]; // Guardar solo el ID del producto
+        $subTotal = $producto['precio'];
         $iva = $subTotal * 0.16;
         $total = $subTotal + $iva;
         $status = 1;
