@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cantidad = 1;
 
     // Verificar si el usuario ya tiene un carrito
-    $sql = "SELECT * FROM carrito WHERE usuario = (SELECT id FROM usuario WHERE email = '$email')";
+    $sql = "SELECT * FROM carrito WHERE usuario = (SELECT id FROM usuario WHERE email = '$email') AND status = 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {

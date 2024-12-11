@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_usuario = $conn->query("SELECT id FROM usuario WHERE email = '$email'")->fetch_assoc()['id'];
 
     // Borrar el id del array de productos 
-    $sql = "SELECT * FROM carrito WHERE usuario = $id_usuario";
+    $sql = "SELECT * FROM carrito WHERE usuario = $id_usuario AND status = 1";
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
         $carrito = $result->fetch_assoc();
