@@ -15,46 +15,53 @@ if ($conn->connect_error) {
 
 // Verificar el método de la solicitud
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Obtener datos desde POST
-    $googleEmail = $_POST['email']; // Email proporcionado por la API de Google
+    // Obtener el correo de la autenticación de Google
+    $email = $_POST['email'] ?? null;
 
-    // Validar entrada
-    if (!filter_var($googleEmail, FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(["error" => "Correo electrónico no válido"]);
+    if (!$email) {
+        echo json_encode(["error" => "Correo no proporcionado"]);
         exit;
     }
 
     // Verificar si el usuario ya existe
-    $sql = "SELECT * FROM usuario WHERE email = '$googleEmail'";
+    $sql = "SELECT * FROM usuario WHERE email = '$email'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
         // Usuario existente
         $usuario = $result->fetch_assoc();
-        echo json_encode(["status" => "success", "message" => "Usuario encontrado", "data" => $usuario]);
+        echo json_encode([
+            "success" => true,
+            "message" => "Usuario ya registrado",
+            "usuario" => $usuario
+        ]);
     } else {
-        // Usuario no encontrado, registrar con datos por defecto
-        $defaultName = "Usuario de Google";
-        $defaultPassword = password_hash("password123", PASSWORD_BCRYPT); // Contraseña encriptada por defecto
+        // Registrar nuevo usuario con datos predeterminados
+        $nombre = "Usuario Google";
+        $telefono = "0000000000";
+        $password = "autenticadoGoogle";
+        $direccion = "Sin dirección";
+        $type = 2; // Tipo de usuario (2: Usuario)
 
-        $insertSql = "INSERT INTO usuario (email, password, nombre) VALUES ('$googleEmail', '$defaultPassword', '$defaultName')";
-        if ($conn->query($insertSql) === TRUE) {
-            $newUserId = $conn->insert_id;
+        $queryUsuario = "INSERT INTO usuario (nombre, email, telefono, password, direccion, type) 
+                         VALUES ('$nombre', '$email', '$telefono', '$password', '$direccion', $type)";
+        if ($conn->query($queryUsuario)) {
+            // Obtener el ID del usuario recién creado
+            $idUsuario = $conn->insert_id;
+
             echo json_encode([
-                "status" => "success",
-                "message" => "Usuario registrado con datos por defecto",
-                "data" => [
-                    "id" => $newUserId,
-                    "email" => $googleEmail,
-                    "nombre" => $defaultName
-                ]
+                "success" => true,
+                "message" => "Usuario registrado con éxito",
+                "idUsuario" => $idUsuario,
+                "email" => $email
             ]);
         } else {
-            echo json_encode(["error" => "Error al registrar usuario: " . $conn->error]);
+            echo json_encode(["error" => "Error al registrar el usuario: " . $conn->error]);
         }
     }
 } else {
     echo json_encode(["error" => "Método no permitido"]);
 }
 
+// Cerrar conexión
 $conn->close();
