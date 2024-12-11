@@ -37,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
     } else {
         // Registrar nuevo usuario con datos predeterminados
-        $nombre = "Usuario Google";
-        $telefono = "0000000000";
+        $nombre = $_POST['nombre'] ?? "Usuario Google";
+        $telefono = $_POST['telefono'] ?? "0000000000";
         $password = "autenticadoGoogle";
         $direccion = "Sin dirección";
         $type = 1; // Tipo de usuario (2: Usuario)
@@ -48,15 +48,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($conn->query($queryUsuario)) {
 
             $sql = "SELECT * FROM usuario WHERE email = '$email'";
-            if ($result->num_rows > 0) {
-                // Usuario existente
-                $usuario = $result->fetch_assoc();
-                echo json_encode([
-                    "success" => true,
-                    "message" => "Usuario ya registrado",
-                    "data" => $usuario
-                ]);
-            }
+            // Usuario existente
+            $result = $conn->query($sql);
+            $usuario = $result->fetch_assoc();
+            echo json_encode([
+                "success" => true,
+                "message" => "Usuario ya registrado",
+                "data" => $usuario
+            ]);
         } else {
             echo json_encode(["error" => "Error al registrar el usuario: " . $conn->error]);
         }
